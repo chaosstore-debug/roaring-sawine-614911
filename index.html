@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuVenXe Store - Official Top-Up & Gamepass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
+        .cyber-font { font-family: 'Orbitron', sans-serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .glass-input { background: rgba(2, 6, 23, 0.9); border: 1px solid rgba(51, 65, 85, 0.9); color: #fff; }
+        .glass-input:focus { border-color: #38bdf8; outline: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+    <header class="sticky top-0 z-40 glass-panel border-b border-cyan-500/20 px-4 md:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('catalog')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-lg"><i class="fa-solid fa-bolt"></i></div>
+                <div>
+                    <span class="cyber-font text-lg md:text-xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">LUVENXE STORE</span>
+                    <span class="block text-[9px] text-cyan-400 font-mono tracking-widest uppercase">Official Top-Up Center</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="switchView('catalog')" class="px-4 py-2 bg-slate-900/80 hover:bg-slate-800 text-cyan-400 text-xs font-bold rounded-xl border border-cyan-500/30 transition-all"><i class="fa-solid fa-store mr-1.5"></i> Katalog</button>
+                <div id="header-auth-area"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-8 space-y-10">
+        <!-- VIEW KATALOG -->
+        <div id="view-catalog" class="space-y-8">
+            <div class="glass-panel rounded-3xl relative overflow-hidden border border-cyan-500/30 shadow-2xl">
+                <div id="banner-slider-container" class="relative w-full h-56 md:h-80 flex items-center justify-center bg-slate-950"></div>
+                <div class="absolute bottom-4 right-4 z-10 bg-slate-950/80 px-4 py-2 rounded-xl border border-slate-800 backdrop-blur-md">
+                    <span class="text-xs text-slate-400 block mb-0.5">Status Sistem Toko</span>
+                    <span id="store-global-status" class="cyber-font text-xs font-bold text-emerald-400">ONLINE 🟢</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2" id="category-filters">
+                <button onclick="filterCategory('ALL')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-slate-950">Semua Kategori</button>
+                <button onclick="filterCategory('ROBUX VIA USERNAME')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800">Robux Via Username</button>
+                <button onclick="filterCategory('ROBUX VIA LOGIN')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800">Robux Via Login</button>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- VIEW CHECKOUT -->
+        <div id="view-checkout" class="hidden space-y-6 max-w-4xl mx-auto">
+            <button onclick="switchView('catalog')" class="px-4 py-2 bg-slate-900 text-cyan-400 text-xs font-bold rounded-xl border border-slate-800 flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+            <div class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 border border-cyan-500/30 shadow-2xl">
+                <div><span class="text-xs font-mono text-cyan-400 font-bold uppercase">Form Pemesanan</span><h2 id="checkout-prod-name" class="cyber-font text-2xl font-black text-white mt-1">...</h2></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-800">
+                    <div class="space-y-4">
+                        <div><label class="block text-xs font-semibold text-slate-300 mb-1.5">Username Roblox Tujuan *</label><input type="text" id="chk-username" oninput="verifyRobloxUser(this.value)" placeholder="Ketik Username..." class="w-full glass-input rounded-xl px-4 py-3 text-sm"></div>
+                        <div id="roblox-verify-card" class="hidden bg-emerald-950/30 border border-emerald-500/40 p-4 rounded-2xl flex items-center gap-4">
+                            <img id="roblox-avatar-img" src="" class="w-14 h-14 rounded-full border-2 border-emerald-400 bg-slate-900 object-cover">
+                            <div><div class="text-xs text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Akun Ditemukan</div><div id="roblox-display-name" class="text-sm font-black text-white mt-0.5">Name</div><div id="roblox-username-handle" class="text-xs text-slate-400">@user</div></div>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-slate-300 mb-1.5">Nomor WhatsApp *</label><input type="text" id="chk-whatsapp" placeholder="081234567890" class="w-full glass-input rounded-xl px-4 py-3 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-slate-300 mb-1.5">Catatan (Opsional)</label><input type="text" id="chk-note" placeholder="Cth: Proses cepat min" class="w-full glass-input rounded-xl px-4 py-3 text-sm"></div>
+                    </div>
+                    <div class="space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3"><label class="block text-xs font-semibold text-slate-300">Pilih Pembayaran *</label><div id="payment-methods-container" class="space-y-2.5 max-h-52 overflow-y-auto"></div></div>
+                        <div id="qris-preview-box" class="hidden p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-2"><span class="text-xs text-cyan-400 font-bold">Scan QRIS:</span><div class="w-36 h-36 mx-auto bg-white p-2 rounded-xl flex items-center justify-center"><img id="qris-img-tag" src="" class="w-full h-full object-contain"></div></div>
+                        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+                            <div class="flex justify-between text-xs text-slate-400"><span>Harga:</span><span id="summary-product-price" class="font-bold text-white">Rp 0</span></div>
+                            <div class="flex justify-between text-xs text-slate-400"><span>Biaya Admin:</span><span id="summary-admin-fee" class="font-bold text-white">Rp 0</span></div>
+                            <div class="pt-2 border-t border-slate-800 flex justify-between text-sm"><span class="font-bold text-white">Total:</span><span id="summary-total-price" class="cyber-font font-black text-cyan-400 text-base">Rp 0</span></div>
+                        </div>
+                        <button onclick="submitCheckoutOrder()" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-600 text-slate-950 font-black rounded-xl cyber-font text-xs shadow-xl">BUAT PESANAN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW PROFIL USER -->
+        <div id="view-profile" class="hidden space-y-6 max-w-4xl mx-auto">
+            <button onclick="switchView('catalog')" class="px-4 py-2 bg-slate-900 text-cyan-400 text-xs font-bold rounded-xl border border-slate-800 flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+            <div class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 border border-cyan-500/30">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+                    <div class="flex items-center gap-4">
+                        <img id="profile-avatar-img" src="" class="w-16 h-16 rounded-2xl border-2 border-cyan-400 object-cover bg-slate-900">
+                        <div>
+                            <div class="flex items-center gap-2"><h2 id="profile-name" class="cyber-font text-xl font-black text-white">Name</h2><span id="profile-provider-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-400/30">Auth</span></div>
+                            <p id="profile-email" class="text-xs text-slate-400 mt-0.5">email@user.com</p>
+                        </div>
+                    </div>
+                    <button onclick="logoutUser()" class="px-4 py-2 bg-red-600/20 text-red-400 text-xs font-bold rounded-xl border border-red-500/30">Keluar Sesi</button>
+                </div>
+                <div class="space-y-3"><h3 class="cyber-font text-sm font-bold text-white">Riwayat Transaksi Saya</h3><div id="profile-orders-history" class="space-y-3"></div></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="glass-panel border-t border-slate-800/80 py-8 px-4 mt-12 text-center text-xs text-slate-400">&copy; 2026 LuVenXe Store. All rights reserved.</footer>
+
+    <!-- MODAL OAUTH & MANUAL -->
+    <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-3xl space-y-6 relative border border-cyan-500/30">
+            <button onclick="closeModal('modal-auth')" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="text-center space-y-1"><h3 class="cyber-font text-xl font-black text-white">MASUK AKUN</h3><p class="text-xs text-slate-400">Pilih metode autentikasi resmi 100% real.</p></div>
+            <div class="space-y-3">
+                <button onclick="loginOAuthResmi('Discord')" class="w-full py-3 bg-[#5865F2] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2"><i class="fa-brands fa-discord text-base"></i> Masuk dengan Discord</button>
+                <button onclick="loginOAuthResmi('Google')" class="w-full py-3 bg-slate-800 border border-slate-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2"><i class="fa-brands fa-google text-base"></i> Masuk dengan Google</button>
+            </div>
+            <div class="relative flex py-1 items-center"><div class="flex-grow border-t border-slate-800"></div><span class="flex-shrink mx-4 text-[10px] text-slate-500 uppercase font-mono">Atau Manual</span><div class="flex-grow border-t border-slate-800"></div></div>
+            <form onsubmit="handleManualAuth(event)" class="space-y-3">
+                <div><input type="email" id="auth-email" required placeholder="Email (nama@email.com)" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-xs"></div>
+                <div><input type="password" id="auth-password" required placeholder="Password" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-xs"></div>
+                <button type="submit" class="w-full py-3 bg-cyan-500 text-slate-950 font-black text-xs rounded-xl cyber-font">MASUK / DAFTAR MANUAL</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        let currentCategoryFilter = 'ALL';
+        let selectedProductForCheckout = null;
+        let selectedPaymentMethodObj = null;
+
+        // OAUTH 2.0 HANDLER (REAL API CALLBACK)
+        async function handleOAuthCallback() {
+            const hash = window.location.hash;
+            if (!hash) return;
+            const params = new URLSearchParams(hash.substring(1));
+            const token = params.get('access_token');
+            const provider = localStorage.getItem('luvenxe_oauth_provider');
+
+            if (token) {
+                history.replaceState(null, null, window.location.pathname);
+                try {
+                    if (provider === 'discord') {
+                        const res = await fetch('https://discord.com/api/v10/users/@me', { headers: { Authorization: `Bearer ${token}` } });
+                        const data = await res.json();
+                        if (data.id) {
+                            const user = { name: data.global_name || data.username, email: data.email || `${data.username}@discord.com`, avatar: data.avatar ? `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png', provider: 'Discord', role: 'MEMBER' };
+                            localStorage.setItem('luvenxe_current_user', JSON.stringify(user));
+                            alert(`Login Discord Berhasil, ${user.name}!`);
+                        }
+                    } else if (provider === 'google') {
+                        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${token}` } });
+                        const data = await res.json();
+                        if (data.sub) {
+                            const user = { name: data.name, email: data.email, avatar: data.picture, provider: 'Google', role: 'MEMBER' };
+                            localStorage.setItem('luvenxe_current_user', JSON.stringify(user));
+                            alert(`Login Google Berhasil, ${user.name}!`);
+                        }
+                    }
+                    renderHeaderAuth();
+                    switchView('profile');
+                } catch (e) {}
+            }
+        }
+
+        function loginOAuthResmi(provider) {
+            const redirectUri = window.location.origin + window.location.pathname;
+            if (provider === 'Discord') {
+                const clientId = localStorage.getItem('luvenxe_discord_client_id') || '';
+                if (!clientId) return alert('Admin belum mengatur Client ID Discord di Dashboard!');
+                localStorage.setItem('luvenxe_oauth_provider', 'discord');
+                window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=identify%20email`;
+            } else if (provider === 'Google') {
+                const clientId = localStorage.getItem('luvenxe_google_client_id') || '';
+                if (!clientId) return alert('Admin belum mengatur Client ID Google di Dashboard!');
+                localStorage.setItem('luvenxe_oauth_provider', 'google');
+                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email`;
+            }
+        }
+
+        // DEFAULT DATA
+        if (!localStorage.getItem('luvenxe_products')) {
+            localStorage.setItem('luvenxe_products', JSON.stringify([{ id: 1, name: '100 Robux', category: 'ROBUX VIA USERNAME', price: 15000, stock: 50 }, { id: 2, name: '400 Robux', category: 'ROBUX VIA LOGIN', price: 55000, stock: 30 }]));
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function handleManualAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const name = email.split('@')[0];
+            const user = { name, email, avatar: `https://ui-avatars.com/api/?name=${name}&background=06b6d4&color=fff`, provider: 'Manual', role: 'MEMBER' };
+            localStorage.setItem('luvenxe_current_user', JSON.stringify(user));
+            closeModal('modal-auth');
+            renderHeaderAuth();
+            switchView('profile');
+        }
+
+        function logoutUser() { localStorage.removeItem('luvenxe_current_user'); renderHeaderAuth(); switchView('catalog'); }
+
+        function renderHeaderAuth() {
+            const area = document.getElementById('header-auth-area');
+            const user = JSON.parse(localStorage.getItem('luvenxe_current_user') || 'null');
+            if (user) {
+                area.innerHTML = `<div onclick="switchView('profile')" class="flex items-center gap-2.5 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl cursor-pointer hover:border-cyan-500"><img src="${user.avatar}" class="w-6 h-6 rounded-full object-cover"><span class="text-xs font-bold text-cyan-400">${user.name}</span></div>`;
+            } else {
+                area.innerHTML = `<button onclick="openModal('modal-auth')" class="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-600 text-slate-950 text-xs font-black rounded-xl cyber-font shadow-lg">Masuk</button>`;
+            }
+        }
+
+        function switchView(viewName) {
+            ['view-catalog', 'view-checkout', 'view-profile'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            if (viewName === 'catalog') { renderShopProducts(); renderStoreBanners(); }
+            else if (viewName === 'checkout') { renderCheckoutPage(); }
+            else if (viewName === 'profile') {
+                const user = JSON.parse(localStorage.getItem('luvenxe_current_user') || 'null');
+                if (!user) return switchView('catalog');
+                renderUserProfile(user);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderStoreBanners() {
+            const banners = JSON.parse(localStorage.getItem('luvenxe_banners') || '[]');
+            const container = document.getElementById('banner-slider-container');
+            container.innerHTML = banners.length > 0 && banners[0].image ? `<img src="${banners[0].image}" class="w-full h-full object-cover">` : `<div class="p-8 text-center"><h2 class="cyber-font text-2xl font-black text-white">FLASH SALE ROBUX TERBESAR</h2><p class="text-xs text-slate-400 mt-2">Dapatkan Robux resmi & legal dengan harga termurah di Indonesia.</p></div>`;
+            const st = localStorage.getItem('luvenxe_web_status') || 'ONLINE';
+            document.getElementById('store-global-status').innerText = st === 'ONLINE' ? 'ONLINE 🟢' : 'MAINTENANCE 🟠';
+        }
+
+        function renderShopProducts() {
+            const products = JSON.parse(localStorage.getItem('luvenxe_products') || '[]');
+            const grid = document.getElementById('product-grid');
+            const filtered = currentCategoryFilter === 'ALL' ? products : products.filter(p => p.category === currentCategoryFilter);
+            
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('bg-cyan-500', 'text-slate-950'); b.classList.add('bg-slate-900', 'text-slate-300');
+            });
+            event?.currentTarget?.classList?.add('bg-cyan-500', 'text-slate-950');
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between space-y-4 hover:border-cyan-500/50">
+                    <div><span class="text-[10px] font-bold text-cyan-400 font-mono">${p.category}</span><h3 class="cyber-font text-lg font-black text-white mt-1">${p.name}</h3><p class="text-xs text-slate-400 mt-1">Stok: <span class="text-emerald-400 font-bold">${p.stock} Ready</span></p></div>
+                    <div class="pt-4 border-t border-slate-800 flex justify-between items-center"><span class="cyber-font text-base font-black text-emerald-400">Rp ${p.price.toLocaleString('id-ID')}</span><button onclick="selectProductForBuy(${p.id})" class="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-600 text-slate-950 font-black rounded-xl text-xs cyber-font">BELI</button></div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) { currentCategoryFilter = cat; renderShopProducts(); }
+
+        function selectProductForBuy(id) {
+            const products = JSON.parse(localStorage.getItem('luvenxe_products') || '[]');
+            selectedProductForCheckout = products.find(x => x.id === id);
+            if (selectedProductForCheckout) switchView('checkout');
+        }
+
+        function renderCheckoutPage() {
+            if (!selectedProductForCheckout) return;
+            document.getElementById('checkout-prod-name').innerText = selectedProductForCheckout.name;
+            document.getElementById('summary-product-price').innerText = `Rp ${selectedProductForCheckout.price.toLocaleString('id-ID')}`;
+            const payments = JSON.parse(localStorage.getItem('luvenxe_payments') || '[]').filter(p => p.active);
+            if (!selectedPaymentMethodObj && payments.length > 0) selectedPaymentMethodObj = payments[0];
+            
+            document.getElementById('payment-methods-container').innerHTML = payments.map(pm => {
+                const isSel = selectedPaymentMethodObj && selectedPaymentMethodObj.id === pm.id;
+                return `<div onclick='selectPaymentMethod(${JSON.stringify(pm)})' class="p-3 rounded-xl border cursor-pointer flex justify-between items-center ${isSel ? 'bg-cyan-500/10 border-cyan-400' : 'bg-slate-900 border-slate-800'}"><div><div class="text-xs font-bold text-white">${pm.name}</div><div class="text-[10px] text-slate-400">${pm.info}</div></div><span class="text-xs font-bold text-emerald-400">Rp ${pm.fee}</span></div>`;
+            }).join('');
+            updateCheckoutSummary();
+        }
+
+        function selectPaymentMethod(pm) {
+            selectedPaymentMethodObj = pm;
+            renderCheckoutPage();
+            const box = document.getElementById('qris-preview-box');
+            if (pm.id.toLowerCase().includes('qris') && pm.qrisImage) {
+                document.getElementById('qris-img-tag').src = pm.qrisImage;
+                box.classList.remove('hidden');
+            } else { box.classList.add('hidden'); }
+        }
+
+        function updateCheckoutSummary() {
+            if (!selectedProductForCheckout || !selectedPaymentMethodObj) return;
+            const total = selectedProductForCheckout.price + selectedPaymentMethodObj.fee;
+            document.getElementById('summary-admin-fee').innerText = `Rp ${selectedPaymentMethodObj.fee.toLocaleString('id-ID')}`;
+            document.getElementById('summary-total-price').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        // API ROBLOX REAL-TIME
+        async function verifyRobloxUser(username) {
+            const card = document.getElementById('roblox-verify-card');
+            if (!username || username.length < 3) { card.classList.add('hidden'); return; }
+            try {
+                const res = await fetch(`https://users.roblox.com/v1/usernames/users`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ usernames: [username], excludeBannedUsers: true }) });
+                const data = await res.json();
+                if (data.data && data.data.length > 0) {
+                    const rbx = data.data[0];
+                    const thumbRes = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${rbx.id}&size=150x150&format=Png&isCircular=false`);
+                    const thumbData = await thumbRes.json();
+                    document.getElementById('roblox-avatar-img').src = (thumbData.data && thumbData.data.length > 0) ? thumbData.data[0].imageUrl : 'https://tr.rbxcdn.com/30day-avatar/150/150/Image/Png';
+                    document.getElementById('roblox-display-name').innerText = rbx.displayName;
+                    document.getElementById('roblox-username-handle').innerText = `@${rbx.name}`;
+                    card.classList.remove('hidden');
+                } else { card.classList.add('hidden'); }
+            } catch (err) { card.classList.add('hidden'); }
+        }
+
+        function submitCheckoutOrder() {
+            const robloxUser = document.getElementById('chk-username').value;
+            const whatsapp = document.getElementById('chk-whatsapp').value;
+            const note = document.getElementById('chk-note').value;
+            if (!robloxUser || !whatsapp) return alert('Lengkapi username & WA!');
+            
+            const st = localStorage.getItem('luvenxe_web_status') || 'ONLINE';
+            if(st === 'MAINTENANCE') return alert('Toko sedang Maintenance, tidak bisa order saat ini.');
+
+            const orderId = Math.floor(100000 + Math.random() * 900000).toString();
+            const total = selectedProductForCheckout.price + selectedPaymentMethodObj.fee;
+            const newOrder = { id: orderId, productName: selectedProductForCheckout.name, robloxUser, whatsapp, note, paymentMethod: selectedPaymentMethodObj.name, total, status: 'PENDING', date: new Date().toLocaleDateString('id-ID') };
+            
+            let orders = JSON.parse(localStorage.getItem('luvenxe_orders') || '[]');
+            orders.push(newOrder);
+            localStorage.setItem('luvenxe_orders', JSON.stringify(orders));
+            alert(`Pesanan #${orderId} berhasil dibuat! Silakan bayar sesuai instruksi.`);
+            switchView('profile');
+        }
+
+        function renderUserProfile(user) {
+            document.getElementById('profile-avatar-img').src = user.avatar;
+            document.getElementById('profile-name').innerText = user.name;
+            document.getElementById('profile-email').innerText = user.email;
+            document.getElementById('profile-provider-badge').innerText = user.provider;
+            
+            const orders = JSON.parse(localStorage.getItem('luvenxe_orders') || '[]');
+            document.getElementById('profile-orders-history').innerHTML = orders.length === 0 ? '<p class="text-xs text-slate-500">Belum ada pesanan.</p>' : orders.slice().reverse().map(o => `
+                <div class="bg-slate-900 p-4 rounded-xl flex justify-between items-center border border-slate-800">
+                    <div><span class="text-xs font-bold text-cyan-400">#${o.id} - ${o.productName}</span><p class="text-[11px] text-slate-400">Roblox: @${o.robloxUser} | Rp ${o.total.toLocaleString()}</p></div>
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${o.status==='ACC'?'bg-emerald-500/20 text-emerald-400': o.status==='DITOLAK'?'bg-red-500/20 text-red-400':'bg-amber-500/20 text-amber-400'}">${o.status}</span>
+                </div>
+            `).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { handleOAuthCallback(); renderHeaderAuth(); switchView('catalog'); });
+    </script>
+</body>
+</html>
